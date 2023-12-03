@@ -1,9 +1,9 @@
 [package]
-name = "st_sui_app"
+name = "roadmap02"
 version = "0.0.1"
 
 [dependencies]
 Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "framework/testnet" }
 
 [addresses]
-st_sui_app = "0x0"
+roadmap02 = "0x0"
