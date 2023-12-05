@@ -265,7 +265,7 @@ module roadmap02::sokoban {
             let target = vector::borrow(map, first_pos);
             if (*target == 0 && !vec_map::contains(&box_map, &first_pos)){
                 current_pos = first_pos;
-            }else if (vec_map::contains(&box_map, &first_pos) && next_pos != 9999){
+            }else if (vec_map::contains(&box_map, &first_pos) && next_pos != 999999){
                 let next = vector::borrow(map, next_pos);
                 if (*next == 0){
                     current_pos = first_pos;
