@@ -1,5 +1,7 @@
 module roadmap02::sokoban {
     use sui::url::{Self, Url};
+    use std::vector;
+    use sui::vec_map;
     use std::string;
     use sui::object::{Self, ID, UID};
     use sui::event;
@@ -9,18 +11,33 @@ module roadmap02::sokoban {
     use sui::package;
 
     /// An example NFT that can be minted by anybody
+    struct SokobanLevel has key, store {
+        id: UID,
+        /// level for the token
+        level: u64,
+        /// width for the token
+        width: u64,
+        /// map for the token
+        map_data: vector<u8>,
+        /// box_pos for the token
+        box_pos: vector<u64>,
+        /// target_pos for the token
+        target_pos: vector<u64>,
+        /// start_pos for the token
+        start_pos: u64,
+        // map creator
+        creator: address,
+    }
+
+    /// An example NFT that can be minted by anybody
     struct SokobanBadge has key, store {
         id: UID,
-        /// Name for the token
+        /// winner for the Badge
         winner: address,
-        /// Name for the token
-        level: string::String,
-        /// Description of the token
-        description: string::String,
-        /// URL for the token
-        url: Url,
-        // TODO: allow custom attributes
-        creator: address,
+        /// level for the Badge
+        level: u64,
+        /// URL for the Badge
+        url: Url
     }
     /// One-Time-Witness for the module.
     struct SOKOBAN has drop {}
@@ -28,124 +45,264 @@ module roadmap02::sokoban {
     // ===== Events =====
 
     struct SokobanBadgeMinted has copy, drop {
-        // The Object ID of the NFT
+        // The Object ID of the Badge
         object_id: ID,
-        // The Object ID of the NFT
-        level: string::String,
-        // The creator of the NFT
-        creator: address,
-        // The winner of the NFT
-        name: address,
+        // The winner of the Badge
+        winner: address,
+        // The level of the Badge
+        level: u64
     }
 
-    fun init(otw: SokobanBadge, ctx: &mut TxContext) {
-        let keys = vector[
-            string::utf8(b"name"),
-            string::utf8(b"level"),
-            string::utf8(b"image_url"),
-            string::utf8(b"description"),
-            string::utf8(b"creator"),
-        ];
+    struct SokobanLevelMinted has copy, drop {
+        // The Object ID of the Level
+        object_id: ID,
+        /// level for the token
+        level: u64,
+        /// width for the token
+        width: u64,
+        /// map for the token
+        map_data: vector<u8>,
+        /// box_pos for the token
+        box_pos: vector<u64>,
+        /// target_pos for the token
+        target_pos: vector<u64>,
+        /// start_pos for the token
+        start_pos: u64,
+    }
 
-        let values = vector[
-            // For `name` one can use the `sokoban.badge` property
-            string::utf8(b"{name}"),
-            // For `name` one can use the `sokoban.level` property
-            string::utf8(b"{level}"),
-            // For `image_url` use an IPFS template + `img_url` property.
-            string::utf8(b"{img_url}"),
-            // Description is static for all `sokoban` objects.
-            string::utf8(b"{description}"),
-            // Creator field can be any
-            string::utf8(b"{creator}")
-        ];
+    fun init(otw: SOKOBAN, ctx: &mut TxContext) {
 
         // Claim the `Publisher` for the package!
         let publisher = package::claim(otw, ctx);
 
-        // Get a new `Display` object for the `Hero` type.
-        let display = display::new_with_fields<SokobanBadge>(
-            &publisher, keys, values, ctx
+
+        // set level
+        let level_keys = vector[
+            string::utf8(b"level"),
+            string::utf8(b"map_data"),
+            string::utf8(b"creator"),
+        ];
+
+        let level_values = vector[
+            // For `image_url` use an IPFS template + `img_url` property.
+            string::utf8(b"{level}"),
+            // For `name` one can use the `sokoban.level` property
+            string::utf8(b"{map_data}"),
+            // Creator field can be any
+            string::utf8(b"{creator}")
+        ];
+
+        // Get a new `Display` object for the `SokobanBadge` type.
+        let level_display = display::new_with_fields<SokobanLevel>(
+            &publisher, level_keys, level_values, ctx
         );
 
         // Commit first version of `Display` to apply changes.
-        display::update_version(&mut display);
+        display::update_version(&mut level_display);
+
+        
+        transfer::public_transfer(level_display, tx_context::sender(ctx));
+
+
+        // set badge
+        let badge_keys = vector[
+            string::utf8(b"winner"),
+            string::utf8(b"level")
+        ];
+
+        let badge_values = vector[
+            // winner address
+            string::utf8(b"{winner}"),
+            // For `level` one can use the `sokoban.level` property
+            string::utf8(b"{level}")
+        ];
+
+    
+        // Get a new `Display` object for the `SokobanBadge` type.
+        let badge_display = display::new_with_fields<SokobanBadge>(
+            &publisher, badge_keys, badge_values, ctx
+        );
+
+        // Commit first version of `Display` to apply changes.
+        display::update_version(&mut badge_display);
+
+        
+        transfer::public_transfer(badge_display, tx_context::sender(ctx));
 
         transfer::public_transfer(publisher, tx_context::sender(ctx));
-        transfer::public_transfer(display, tx_context::sender(ctx));
     }
 
     // ===== Public view functions =====
 
-    /// Get the NFT's `name`
-    public fun name(nft: &SokobanBadge): &string::String {
-        &nft.name
+    /// Get SokobanLevel `map`
+    public fun map_data(nft: &SokobanLevel): &vector<u8> {
+        &nft.map_data
     }
 
-    /// Get the NFT's `level`
-    public fun level(nft: &SokobanBadge): &string::String {
+    /// Get SokobanLevel `level`
+    public fun level(nft: &SokobanLevel): &u64 {
         &nft.level
     }
 
-    /// Get the NFT's `description`
-    public fun description(nft: &SokobanBadge): &string::String {
-        &nft.description
+    /// Get SokobanLevel `creator`
+    public fun creator(nft: &SokobanLevel): &address {
+        &nft.creator
     }
 
-    /// Get the NFT's `url`
+
+
+    /// Get SokobanBadge `winner`
+    public fun winner(nft: &SokobanBadge): &address {
+        &nft.winner
+    }
+
+    /// Get SokobanBadge `level`
+    public fun badge_level(nft: &SokobanBadge): &u64 {
+        &nft.level
+    }
+
+    /// Get SokobanBadge `url`
     public fun url(nft: &SokobanBadge): &Url {
         &nft.url
     }
 
-    // ===== Entrypoints =====
 
-    /// Create a new devnet_nft
-    public fun mint_to_winner(
-        name: vector<u8>,
-        level: vector<u8>,
-        description: vector<u8>,
-        url: vector<u8>,
+    public entry fun mint_level(
+        level: u64,
+        width: u64,
+        map_data: vector<u8>,
+        box_pos: vector<u64>,
+        target_pos: vector<u64>,
+        start_pos: u64,
         ctx: &mut TxContext
-    ) {
+    ){
         let sender = tx_context::sender(ctx);
-        let nft = SokobanBadge {
+        let nft = SokobanLevel {
             id: object::new(ctx),
-            name: string::utf8(name),
-            level: string::utf8(level),
-            description: string::utf8(description),
-            url: url::new_unsafe_from_bytes(url),
+            level: level,
+            width: width,
+            map_data: map_data,
+            box_pos: box_pos,
+            target_pos: target_pos,
+            start_pos: start_pos,
             creator: sender,
         };
 
-        event::emit(NFTMinted {
+        event::emit(SokobanLevelMinted {
             object_id: object::id(&nft),
-            creator: sender,
-            name: nft.name,
-            level:level
+            level: level,
+            width: width,
+            map_data: map_data,
+            box_pos: box_pos,
+            target_pos: target_pos,
+            start_pos: start_pos,
         });
 
         transfer::public_transfer(nft, sender);
     }
 
-    /// Transfer `nft` to `recipient`
-    public entry fun transfer(
-        nft: AvatarNFT, recipient: address, _: &mut TxContext
+    // ===== Entrypoints =====
+
+    /// Create a new SokobanBadge
+    public entry fun mint_to_winner(
+        passed: & SokobanLevel,
+        operation: vector<u8>,
+        ctx: &mut TxContext
     ) {
-        transfer::public_transfer(nft, recipient)
+        let sender = tx_context::sender(ctx);
+
+        let map = & passed.map_data;
+        let box_pos = & passed.box_pos;
+
+        let box_map = vec_map::empty<u64, u64>();
+        let i = 0;
+        while (i < vector::length(box_pos)) {
+            vec_map::insert(&mut box_map, *vector::borrow(box_pos, i), i);
+            i = i + 1;
+        };
+
+        let target_pos = & passed.target_pos;
+
+        let width = passed.width;
+        let current_pos = passed.start_pos;
+
+        let oplen = vector::length(&operation);
+
+        let i =0;
+
+        while (i < oplen){
+            let op = *vector::borrow(&operation, i);
+            i = i + 1;
+            let first_pos = 999999u64;
+            let next_pos = 999999u64;
+
+            if (op==2 && current_pos >= width){
+                first_pos = current_pos - width;
+                if (first_pos >= width){
+                    next_pos = first_pos - width;
+                }
+            }else if (op==8 && current_pos <= width * (width-1)){
+                first_pos = current_pos + width;
+                if (first_pos <= width * (width-1)){
+                    next_pos = first_pos + width;
+                }
+            }else if (op==4 && current_pos%width > 0){
+                first_pos = current_pos - 1;
+                if (first_pos%width > 0){
+                    next_pos = first_pos - 1;
+                }
+                
+            }else if (op==6 && current_pos%width < width-1){
+                first_pos = current_pos + 1;
+                if (first_pos%width < width-1){
+                    next_pos = first_pos + 1;
+                }
+            
+            } else{
+                continue
+            };
+
+            let target = vector::borrow(map, first_pos);
+            if (*target == 0 && !vec_map::contains(&box_map, &first_pos)){
+                current_pos = first_pos;
+            }else if (vec_map::contains(&box_map, &first_pos) && next_pos != 9999){
+                let next = vector::borrow(map, next_pos);
+                if (*next == 0){
+                    current_pos = first_pos;
+                    vec_map::insert(&mut box_map, next_pos, i);
+                    vec_map::remove(&mut box_map, &first_pos);
+                }
+            }
+        };
+
+        let flag = true;
+
+        let i = 0;
+        while (i < vector::length(target_pos)){
+            if (!vec_map::contains(&box_map, vector::borrow(target_pos, i))){
+                flag=false;
+                break
+            };
+            i = i+1;
+        };
+
+        if (flag == true){
+            let nft = SokobanBadge {
+                id: object::new(ctx),
+                winner: sender,
+                level: passed.level,
+                url: url::new_unsafe_from_bytes(b"https://www.sina.com.cn")
+            };
+
+            event::emit(SokobanBadgeMinted {
+                object_id: object::id(&nft),
+                winner: sender,
+                level:passed.level
+            });
+
+            transfer::public_transfer(nft, sender);
+        }
+        
     }
 
-    /// Update the `description` of `nft` to `new_description`
-    public entry fun update_description(
-        nft: &mut AvatarNFT,
-        new_description: vector<u8>,
-        _: &mut TxContext
-    ) {
-        nft.description = string::utf8(new_description)
-    }
-
-    /// Permanently delete `nft`
-    public entry fun burn(nft: AvatarNFT, _: &mut TxContext) {
-        let AvatarNFT { id, name: _, description: _, url: _, creator: _ } = nft;
-        object::delete(id)
-    }
 }
