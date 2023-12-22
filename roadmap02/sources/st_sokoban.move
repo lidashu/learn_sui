@@ -11,8 +11,7 @@ module roadmap02::sokoban {
     use sui::package;
 
     /// An example NFT that can be minted by anybody
-    struct SokobanLevel has key, store {
-        id: UID,
+    struct SokobanLevel has store, copy {
         /// level for the token
         level: u64,
         /// width for the token
@@ -28,6 +27,18 @@ module roadmap02::sokoban {
         // map creator
         creator: address,
     }
+
+    /// An example NFT that can be minted by anybody
+    struct SokobanLevelPack has key, store {
+        id: UID,
+        /// level for the token
+        levels: vector<SokobanLevel>,
+        /// name for the level pack
+        pack_name: vector<u8>,
+        // pack creator
+        creator: address,
+    }
+
 
     /// An example NFT that can be minted by anybody
     struct SokobanBadge has key, store {
@@ -54,8 +65,6 @@ module roadmap02::sokoban {
     }
 
     struct SokobanLevelMinted has copy, drop {
-        // The Object ID of the Level
-        object_id: ID,
         /// level for the token
         level: u64,
         /// width for the token
@@ -74,34 +83,6 @@ module roadmap02::sokoban {
 
         // Claim the `Publisher` for the package!
         let publisher = package::claim(otw, ctx);
-
-
-        // set level
-        let level_keys = vector[
-            string::utf8(b"level"),
-            string::utf8(b"map_data"),
-            string::utf8(b"creator"),
-        ];
-
-        let level_values = vector[
-            // For `image_url` use an IPFS template + `img_url` property.
-            string::utf8(b"{level}"),
-            // For `name` one can use the `sokoban.level` property
-            string::utf8(b"{map_data}"),
-            // Creator field can be any
-            string::utf8(b"{creator}")
-        ];
-
-        // Get a new `Display` object for the `SokobanBadge` type.
-        let level_display = display::new_with_fields<SokobanLevel>(
-            &publisher, level_keys, level_values, ctx
-        );
-
-        // Commit first version of `Display` to apply changes.
-        display::update_version(&mut level_display);
-
-        
-        transfer::public_transfer(level_display, tx_context::sender(ctx));
 
 
         // set badge
@@ -126,13 +107,45 @@ module roadmap02::sokoban {
         // Commit first version of `Display` to apply changes.
         display::update_version(&mut badge_display);
 
+        // create sokoban level pack
+        let pack = SokobanLevelPack {
+            id: object::new(ctx),
+            // level for the token
+            levels: vector::empty<SokobanLevel>(),
+            pack_name: b"levelpack",
+            // pack creator
+            creator: tx_context::sender(ctx),
+        };
+
         
         transfer::public_transfer(badge_display, tx_context::sender(ctx));
-
         transfer::public_transfer(publisher, tx_context::sender(ctx));
+        transfer::share_object(pack);
     }
 
     // ===== Public view functions =====
+
+    /// Get SokobanLevel `map`
+    public fun pack_levels(nft: &SokobanLevelPack): &vector<SokobanLevel> {
+        &nft.levels
+    }
+
+    /// Get SokobanLevel `map`
+    public fun get_level(nft: &SokobanLevelPack, idx: u64): &SokobanLevel {
+        vector::borrow<SokobanLevel>(&nft.levels, idx)
+    }
+
+    /// Get SokobanLevel `level`
+    public fun pack_name(nft: &SokobanLevelPack): &vector<u8> {
+        &nft.pack_name
+    }
+
+    /// Get SokobanLevel `creator`
+    public fun levelpack_creator(nft: &SokobanLevelPack): &address {
+        &nft.creator
+    }
+
+
 
     /// Get SokobanLevel `map`
     public fun map_data(nft: &SokobanLevel): &vector<u8> {
@@ -168,17 +181,17 @@ module roadmap02::sokoban {
 
 
     public entry fun mint_level(
-        level: u64,
+        levelpack: &mut SokobanLevelPack,
         width: u64,
         map_data: vector<u8>,
         box_pos: vector<u64>,
         target_pos: vector<u64>,
         start_pos: u64,
-        ctx: &mut TxContext
+        ctx: & TxContext
     ){
         let sender = tx_context::sender(ctx);
+        let level = vector::length<SokobanLevel>(&levelpack.levels);
         let nft = SokobanLevel {
-            id: object::new(ctx),
             level: level,
             width: width,
             map_data: map_data,
@@ -188,8 +201,9 @@ module roadmap02::sokoban {
             creator: sender,
         };
 
+        vector::push_back<SokobanLevel>(&mut levelpack.levels, nft);
+
         event::emit(SokobanLevelMinted {
-            object_id: object::id(&nft),
             level: level,
             width: width,
             map_data: map_data,
@@ -198,18 +212,19 @@ module roadmap02::sokoban {
             start_pos: start_pos,
         });
 
-        transfer::public_transfer(nft, sender);
     }
 
     // ===== Entrypoints =====
 
     /// Create a new SokobanBadge
     public entry fun mint_to_winner(
-        passed: & SokobanLevel,
+        levelpack: & SokobanLevelPack,
+        level_index: u64,
         operation: vector<u8>,
         ctx: &mut TxContext
     ) {
         let sender = tx_context::sender(ctx);
+        let passed = vector::borrow<SokobanLevel>(&levelpack.levels, level_index);
 
         let map = & passed.map_data;
         let box_pos = & passed.box_pos;

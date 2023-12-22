@@ -2,6 +2,8 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "@mysten/dapp-kit/dist/index.css";
 import "@radix-ui/themes/styles.css";
+import { Game } from "./components/sokoban";
+import "./index.css";
 
 import { getFullnodeUrl } from "@mysten/sui.js/client";
 import {
@@ -26,12 +28,14 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <Theme appearance="dark">
       <QueryClientProvider client={queryClient}>
-        <SuiClientProvider networks={networkConfig} defaultNetwork="devnet">
+        <SuiClientProvider networks={networkConfig} defaultNetwork="testnet">
           <WalletProvider autoConnect>
-            <App />
+          <App />
+            <Game />
           </WalletProvider>
         </SuiClientProvider>
       </QueryClientProvider>
     </Theme>
+    
   </React.StrictMode>,
 );

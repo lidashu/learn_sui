@@ -1,0 +1,298 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body,
+  html {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: rgb(0, 0, 0);
+  }
+  
+  .app {
+    align-items: center;
+    background: rgb(0, 0, 0);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100svh;
+  }
+  
+  .title {
+    color: rgb(255, 255, 255);
+    font-size: 40px;
+    font-weight: bold;
+    margin-top: 8px;
+    text-align: center;
+  }
+  
+  .subtitle {
+    color: rgb(255, 255, 255);
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+  
+  .subtitle-a {
+    border-bottom: 1px solid rgb(220, 220, 220);
+    color: rgb(220, 220, 220);
+    font-size: 12px;
+    text-decoration: none;
+  }
+  
+  .subtitle-a:hover {
+    border-bottom: 1px solid rgb(255, 255, 255);
+    color: rgb(255, 255, 255);
+  }
+  
+  .arrows-container {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    height: 200px;
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .arrows {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .btn-arrow {
+    align-items: center;
+    background-color: rgb(255, 255, 255);
+    border-radius: 25%;
+    cursor: pointer;
+    display: flex;
+    font-size: 25px;
+    height: 70px;
+    justify-content: center;
+    margin: 5px;
+    user-select: none;
+    width: 70px;
+  }
+  
+  .btn-arrow:hover {
+    background-color: rgba(255, 255, 255, 0.8);
+  }
+  
+  .btn-arrow:active {
+    background-color: rgba(255, 255, 255, 0.6);
+  }
+  
+  .svg-arrow {
+    height: 30px;
+    width: 30px;
+  }
+  
+  .flex {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .between {
+    justify-content: space-between;
+    max-width: 400px;
+    width: 100%;
+  }
+  
+  .pb-2 {
+    padding-bottom: 20px;
+  }
+  
+  .game {
+    background-color: rgb(128, 128, 128);
+    outline: 10px solid black;
+  }
+  
+  .cell {
+    height: 50px;
+    width: 50px;
+  }
+  
+  .rules {
+    background-color: rgba(0, 0, 0, 0.8);
+    box-sizing: border-box;
+    color: rgb(0, 0, 0);
+    height: 100vh;
+    height: 100svh;
+    overflow-y: auto;
+    padding: 20px;
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 100vw;
+    z-index: 100;
+  }
+  
+  .rules-button-close {
+    align-items: center;
+    background-color: transparent;
+    border: none;
+    color: rgb(255, 255, 255);
+    cursor: pointer;
+    display: flex;
+  
+    font-size: 20px;
+    font-weight: bold;
+    height: 30px;
+    justify-content: center;
+    position: fixed;
+    right: 20px;
+    top: 20px;
+    width: 30px;
+    z-index: 100;
+  }
+  
+  .rules-div {
+    background-color: rgb(128, 128, 128);
+    margin: 20vh auto 0 auto;
+    margin-top: 20svh;
+    max-width: 420px;
+    padding: 20px;
+    position: absolute;
+    z-index: 100;
+  }
+  
+  .rules-h2 {
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .rules-p {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .rules-img {
+    width: 20px;
+  }
+  
+  .rules-btn {
+    background-color: rgb(255, 255, 255);
+    border-radius: 5px;
+    border: none;
+    color: rgb(0, 0, 0);
+    font-size: 15px;
+    font-weight: bold;
+    margin: 0 0 0 4px;
+    padding: 5px;
+  }
+  
+  .blue-goal {
+    background: radial-gradient(circle, rgb(55, 55, 255) 45%, transparent 55%);
+    background: rgb(55, 55, 255);
+    border-radius: 50%;
+    display: inline-block;
+    height: 20px;
+    width: 20px;
+  }
+  
+  @media screen and (max-width: 600px) {
+    .cell {
+      width: 40px;
+      height: 40px;
+    }
+  }
+  
+  @media screen and (max-width: 480px) {
+    .cell {
+      width: 30px;
+      height: 30px;
+    }
+  }
+  
+  @media screen and (max-width: 360px) {
+    .cell {
+      width: 20px;
+      height: 20px;
+    }
+  }
+  
+  .message-winner {
+    align-items: center;
+    background-color: rgba(50, 0, 50, 0.9);
+    color: rgb(255, 255, 255);
+    display: flex;
+    font-size: 25px;
+    font-weight: bold;
+    height: 100vh;
+    height: 100svh;
+    justify-content: center;
+    left: 0;
+    margin-left: auto;
+    margin-right: auto;
+    position: fixed;
+    right: 0;
+    text-align: center;
+    width: 100vw;
+    z-index: 100;
+  }
+  
+  .btn {
+    background-color: rgb(255, 255, 255);
+    border-radius: 5px;
+    border: none;
+    color: rgb(0, 0, 0);
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    margin: 0 4px;
+    padding: 5px;
+    width: 100%;
+  }
+  
+  .btn:hover {
+    background-color: rgba(255, 255, 255, 0.8);
+  }
+  
+  .btn:active {
+    background-color: rgba(255, 255, 255, 0.6);
+  }
+  
+  .cell-img {
+    background-color: rgb(128, 128, 128);
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
+  
+  .cell-wall {
+    background-image: url("/assets/wall.png");
+  }
+  
+  .cell-empty {
+    background-color: rgb(128, 128, 128);
+  }
+  
+  .cell-goal {
+    background-image: url("/assets/goal.png");
+  }
+  
+  .cell-box {
+    background-image: url("/assets/box.png");
+  }
+  
+  .cell-player {
+    background-image: url("/assets/player.png");
+  }
+  
+  .cell-player-ArrowUp {
+    transform: rotate(0deg);
+  }
+  .cell-player-ArrowDown {
+    transform: rotate(180deg);
+  }
+  .cell-player-ArrowLeft {
+    transform: rotate(270deg);
+  }
+  .cell-player-ArrowRight {
+    transform: rotate(90deg);
+  }
+  
+  .mt-20 {
+    margin-top: 20px;
+  }
+  
