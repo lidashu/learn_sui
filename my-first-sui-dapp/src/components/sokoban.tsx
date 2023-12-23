@@ -1,26 +1,27 @@
 import { useCallback, useEffect, useRef, useState, KeyboardEvent } from "react";
-import { SuiClient, SuiEvent } from '@mysten/sui.js/client';
+import { SuiClient } from '@mysten/sui.js/client';
 import { TransactionBlock } from '@mysten/sui.js/transactions';
 import { useCurrentAccount, useSignAndExecuteTransactionBlock } from '@mysten/dapp-kit';
+
+import { LevelpackObjectId, sokobanPackageObjectId, BackupLevels } from './constants';
 
 
 const client = new SuiClient({
 	url: 'https://fullnode.testnet.sui.io:443',
 });
 
-
+const empty_flag = 0;
 const wall_flag = 1;
 const box_flag = 3;
 const target_flag = 2;
 const player_flag = 4;
 
-const LevelpackObjectId = '0x6a6644c8360f296c9049488312a590a184f743205ddfa76eeafa709c354f63ae'; 
-const sokobanPackageObjectId = '0xdff37ddba67d72f63afca72cb3f39bd272b9b79c440c532c77419893f9f641d2'; 
 
-const levelpack = await client.getObject({ id: LevelpackObjectId, options: { showContent: true} });
-const levels = levelpack.data.content.fields.levels;
 
 type ArrowKey = "ArrowUp" | "ArrowDown" | "ArrowLeft" | "ArrowRight";
+
+const levelpack = await client.getObject({ id: LevelpackObjectId, options: { showContent: true} });
+const packlevels = levelpack.data.content.fields.levels;
 
 export const Game = () => {
   
@@ -43,6 +44,7 @@ export const Game = () => {
   const [levelContainer, setLevelContainer] = useState<number[][]>([]);
   const [messageWinner, setMessageWinner] = useState("");
   const [level, setLevel] = useState<number>(0);
+  const [levels, setLevels] = useState(packlevels);
 
   const makeLevelMap = (levelIndex: number) => {
 
@@ -109,7 +111,7 @@ export const Game = () => {
     fetch_minted(digest);
   }, [digest]);
 
-  const mint_won_level = async () => {
+  const mint_level_badge = async () => {
     mint_win(playerActions);
     
   };
@@ -205,6 +207,12 @@ export const Game = () => {
 
   };
 
+  const loadPackLevels = async () => {
+    let _levelpack = await client.getObject({ id: LevelpackObjectId, options: { showContent: true} });
+    let _packlevels = _levelpack.data.content.fields.levels;
+    setLevels(_packlevels);
+  };
+
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
     const allowedKeys: ArrowKey[] = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
 
@@ -219,9 +227,11 @@ export const Game = () => {
   };
 
   const nextLevel = () => {
-    setLevel(level + 1);
+    
     setMessageWinner("");
     setDigest(null);
+    setLevel(level + 1);
+
   };
 
   const restartLevel = () => {
@@ -232,10 +242,10 @@ export const Game = () => {
   };
 
   const restartGame = () => {
-    setLevel(0);
+    
     setDigest(null);
     setMessageWinner("");
-    makeLevelMap(0);
+    setLevel(0);
   };
 
   const mint_win = useCallback(async (actions:number[]) => {
@@ -272,12 +282,84 @@ export const Game = () => {
   }, [account]);
 
   const fetch_minted = useCallback(async (digestId:string) => {
+    if (digestId == null || digestId == "") return;
     let txn_block = await client.getTransactionBlock({ digest: digestId, options: { showEvents: true} });
     console.log("txn_block:", txn_block);
     if (txn_block.events != null && txn_block.events != undefined && txn_block.events.length > 0){
       setMinted(txn_block.events[0].parsedJson["object_id"]);
     }
   }, [digest]);
+
+
+  const mint_level = async () => {
+    let raw_level:number[] = BackupLevels[levels.length];
+    let new_level = { 
+          width: Math.sqrt(raw_level.length) as number,
+          map_data: [] as number[],
+          box_pos: [] as number[],
+          target_pos: [] as number[],
+          start_pos: 0 as number,
+    };
+    for (let i=0;i<raw_level.length;i++){
+      if (raw_level[i] == 1){
+        new_level.map_data.push(wall_flag);
+      }else{
+        new_level.map_data.push(empty_flag);
+      }
+      if (raw_level[i] == 2){
+        new_level.target_pos.push(i);
+      }
+      if (raw_level[i] == 3){
+        new_level.box_pos.push(i);
+      }
+      if (raw_level[i] == 4){
+        new_level.start_pos = i;
+      }
+      if (raw_level[i] == 5){
+        new_level.box_pos.push(i);
+        new_level.target_pos.push(i);
+      }
+      
+    }
+    
+
+    console.log("try mint_level");
+    if (!account) return;
+    console.log("got wallet");
+    try {
+      const mintTransactionBlock = new TransactionBlock(); 
+      mintTransactionBlock.moveCall({
+        target: `${sokobanPackageObjectId}::sokoban::mint_level`,
+        arguments: [
+          mintTransactionBlock.object(LevelpackObjectId),
+          mintTransactionBlock.pure(new_level.width),
+          mintTransactionBlock.pure(new_level.map_data),
+          mintTransactionBlock.pure(new_level.box_pos),
+          mintTransactionBlock.pure(new_level.target_pos),
+          mintTransactionBlock.pure(new_level.start_pos)
+        ]
+      })
+      
+      await signAndExecuteTransactionBlock({
+        transactionBlock: mintTransactionBlock,
+          chain: 'sui:testnet',
+        },
+        {
+          onSuccess: (result) => {
+            console.log('executed transaction block', result);
+            loadPackLevels();
+            console.log("current levels: ", levels.length);
+            selectLevel(levels.length);
+
+          },
+        },
+      ); 
+      
+    } catch (error) {
+      console.log(error);
+    }
+
+  };
 
 
   return (
@@ -288,15 +370,18 @@ export const Game = () => {
             <h3>{messageWinner}</h3>
             {
               digest == null ? (
-              <button className="btn" onClick={mint_won_level}>
-                  mint this level
+              <button className="btn" onClick={mint_level_badge}>
+                  mint this level badge
               </button>
-              ) :(<div><a href={"https://suiexplorer.com/object/" + minted +"?network=testnet"} >Badge</a> Minted!</div>)}
+              ) :(<div><a href={"https://suiexplorer.com/object/" + minted +"?network=testnet"} >Badge</a> Minted!</div>)
+            }
             
             {level < levels.length - 1 ? (
-              <button className="btn" onClick={nextLevel}>
-                Next Level
-              </button>
+              <div>
+                <button className="btn" onClick={nextLevel}>
+                  Next Level
+                </button>
+              </div>
             ) : (
               <>
                 <h4>& The full game!</h4>
@@ -305,6 +390,12 @@ export const Game = () => {
                 </button>
               </>
             )}
+            { levels.length < BackupLevels.length ? 
+                  <button className="btn" onClick={mint_level}>
+                    mint new level
+                  </button>
+              :<></>
+            }
           </div>
         </div>
       )}
