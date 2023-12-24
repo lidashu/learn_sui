@@ -431,7 +431,7 @@ export const Game = () => {
       )}
       <h1 className="title">Sokoban </h1>
       
-      <Flex position="sticky" justify="between">
+      <Flex position="sticky" justify="between" className="background">
       <Heading className="pb-2 between flex">
         <select className="btn" value={level} onChange={selectLevel}>
           {levels.map((l = "", index = 0) => (

@@ -11,7 +11,7 @@ export function WalletStatus() {
           <Text>connected: {account.address.substring(0, 5) + "..." + account.address.substring(account.address.length-5)}</Text>
         </Flex>
       ) : (
-        <Text>Wallet not connected</Text>
+        <Text></Text>
       )}
     </Container>
   );
