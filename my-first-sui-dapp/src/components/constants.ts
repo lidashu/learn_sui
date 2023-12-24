@@ -1,5 +1,5 @@
-export const LevelpackObjectId = '0x6a6644c8360f296c9049488312a590a184f743205ddfa76eeafa709c354f63ae'; 
-export const sokobanPackageObjectId = '0xdff37ddba67d72f63afca72cb3f39bd272b9b79c440c532c77419893f9f641d2'; 
+export const LevelpackObjectId = '0xa66249c5b58b44a974c553a4b9739cfebf1b9e39d586c33e96d5729a3ef883ea'; 
+export const sokobanPackageObjectId = '0x8ef44e8461a4b9f36df4ca34a236a439a586c63a40cc20fe0119611b09d75e55'; 
 
 export const BackupLevels:number[][] = [
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,

@@ -88,14 +88,16 @@ module roadmap02::sokoban {
         // set badge
         let badge_keys = vector[
             string::utf8(b"winner"),
-            string::utf8(b"level")
+            string::utf8(b"level"),
+            string::utf8(b"url")
         ];
 
         let badge_values = vector[
             // winner address
             string::utf8(b"{winner}"),
             // For `level` one can use the `sokoban.level` property
-            string::utf8(b"{level}")
+            string::utf8(b"{level}"),
+            string::utf8(b"{url}"),
         ];
 
     
@@ -306,7 +308,7 @@ module roadmap02::sokoban {
                 id: object::new(ctx),
                 winner: sender,
                 level: passed.level,
-                url: url::new_unsafe_from_bytes(b"https://www.sina.com.cn")
+                url: url::new_unsafe_from_bytes(b"https://raw.githubusercontent.com/lidashu/learn_sui/main/my-first-sui-dapp/assets/badge.png")
             };
 
             event::emit(SokobanBadgeMinted {

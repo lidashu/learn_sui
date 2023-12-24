@@ -17,7 +17,6 @@ const target_flag = 2;
 const player_flag = 4;
 
 
-
 type ArrowKey = "ArrowUp" | "ArrowDown" | "ArrowLeft" | "ArrowRight";
 
 const levelpack = await client.getObject({ id: LevelpackObjectId, options: { showContent: true} });
@@ -84,8 +83,13 @@ export const Game = () => {
   };
 
   useEffect(() => {
-    makeLevelMap(level);
-    setHasWon(!hasWon);
+    if (levels.length == 0){
+        mint_level();
+    }else{
+      makeLevelMap(level);
+      setHasWon(!hasWon);
+    }
+    
   }, [level]);
 
   useEffect(() => {
@@ -112,7 +116,7 @@ export const Game = () => {
   }, [digest]);
 
   const mint_level_badge = async () => {
-    mint_win(playerActions);
+    mint_win(playerActions, level);
     
   };
 
@@ -248,7 +252,7 @@ export const Game = () => {
     setLevel(0);
   };
 
-  const mint_win = useCallback(async (actions:number[]) => {
+  const mint_win = useCallback(async (actions:number[], level_index:number) => {
     console.log("try mint_win");
     if (!account) return;
     console.log("got wallet");
@@ -259,10 +263,12 @@ export const Game = () => {
         target: `${sokobanPackageObjectId}::sokoban::mint_to_winner`,
         arguments: [
           mintTransactionBlock.object(LevelpackObjectId),
-          mintTransactionBlock.pure(level),
+          mintTransactionBlock.pure(level_index),
           mintTransactionBlock.pure(actions)
         ]
       })
+
+      console.log("mint_win: ", LevelpackObjectId, level_index, actions);
       
       await signAndExecuteTransactionBlock({
         transactionBlock: mintTransactionBlock,
@@ -321,7 +327,6 @@ export const Game = () => {
       }
       
     }
-    
 
     console.log("try mint_level");
     if (!account) return;
@@ -349,7 +354,7 @@ export const Game = () => {
             console.log('executed transaction block', result);
             loadPackLevels();
             console.log("current levels: ", levels.length);
-            selectLevel(levels.length);
+            nextLevel();
 
           },
         },
@@ -373,7 +378,7 @@ export const Game = () => {
               <button className="btn" onClick={mint_level_badge}>
                   mint this level badge
               </button>
-              ) :(<div><a href={"https://suiexplorer.com/object/" + minted +"?network=testnet"} >Badge</a> Minted!</div>)
+              ) :(<div><a href={"https://suiexplorer.com/object/" + minted +"?network=testnet"} target="_blank" >Badge</a> Minted!</div>)
             }
             
             {level < levels.length - 1 ? (
