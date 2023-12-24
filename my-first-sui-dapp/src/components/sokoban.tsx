@@ -215,6 +215,7 @@ export const Game = () => {
     let _levelpack = await client.getObject({ id: LevelpackObjectId, options: { showContent: true} });
     let _packlevels = _levelpack.data.content.fields.levels;
     setLevels(_packlevels);
+    setLevel(_packlevels.length - 1);
   };
 
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
@@ -226,8 +227,15 @@ export const Game = () => {
   };
 
   const selectLevel = ({ target: { value = "0" } }) => {
-    setLevel(parseInt(value));
+    switchLevel(parseInt(value));
+    
+  };
+
+  const switchLevel = (index:number) => {
     setMessageWinner("");
+    setDigest(null);
+    setLevel(index);
+    
   };
 
   const nextLevel = () => {
@@ -353,9 +361,6 @@ export const Game = () => {
           onSuccess: (result) => {
             console.log('executed transaction block', result);
             loadPackLevels();
-            console.log("current levels: ", levels.length);
-            nextLevel();
-
           },
         },
       ); 
@@ -395,12 +400,7 @@ export const Game = () => {
                 </button>
               </>
             )}
-            { levels.length < BackupLevels.length ? 
-                  <button className="btn" onClick={mint_level}>
-                    mint new level
-                  </button>
-              :<></>
-            }
+            
           </div>
         </div>
       )}
@@ -417,6 +417,12 @@ export const Game = () => {
         <button className="btn" onClick={restartLevel}>
           Restart Level
         </button>
+        { levels.length < BackupLevels.length ? 
+                  <button className="btn" onClick={mint_level}>
+                    mint new level
+                  </button>
+              :<></>
+            }
       </div>
 
       <div className="game" ref={gameScreenRef} tabIndex={-1} onKeyDown={onKeyDown}>
