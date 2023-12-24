@@ -33,3 +33,7 @@ To build your app for deployment you can run
 ```bash
 pnpm build
 ```
+
+thanks:
+1. https://github.com/shunyue1320/sokoban
+2. https://github.com/giulianoconti/sokoban-reactjs
