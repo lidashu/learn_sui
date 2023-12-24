@@ -8,16 +8,16 @@
   html {
     margin: 0;
     font-family: Arial, Helvetica, sans-serif;
-    background-color: rgb(0, 0, 0);
+    background-color: rgb(130, 176, 14);
   }
   
   .app {
     align-items: center;
-    background: rgb(0, 0, 0);
+    background: rgb(130, 176, 14);
     display: flex;
     flex-direction: column;
-    height: 100vh;
-    height: 100svh;
+    height: 80vh;
+    height: 80svh;
   }
   
   .title {
@@ -93,18 +93,19 @@
   }
   
   .between {
-    justify-content: space-between;
+    justify-content: flex-start;
     max-width: 400px;
     width: 100%;
   }
   
   .pb-2 {
     padding-bottom: 20px;
+    justify-content: center;
   }
   
   .game {
-    background-color: rgb(128, 128, 128);
-    outline: 10px solid black;
+    background-color: rgb(22, 86, 4);
+    outline: 10px solid rgb(22, 86, 4);
   }
   
   .cell {
@@ -175,7 +176,7 @@
     background-color: rgb(255, 255, 255);
     border-radius: 5px;
     border: none;
-    color: rgb(0, 0, 0);
+    color: rgb(3, 86, 4);
     font-size: 15px;
     font-weight: bold;
     margin: 0 0 0 4px;

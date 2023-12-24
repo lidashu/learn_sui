@@ -1,13 +1,17 @@
 import { useCallback, useEffect, useRef, useState, KeyboardEvent } from "react";
 import { SuiClient } from '@mysten/sui.js/client';
 import { TransactionBlock } from '@mysten/sui.js/transactions';
-import { useCurrentAccount, useSignAndExecuteTransactionBlock } from '@mysten/dapp-kit';
+import { useCurrentAccount, ConnectModal, useSignAndExecuteTransactionBlock } from '@mysten/dapp-kit';
 
-import { LevelpackObjectId, sokobanPackageObjectId, BackupLevels } from './constants';
+import { ConnectButton } from "@mysten/dapp-kit";
+import { Box, Flex, Heading } from "@radix-ui/themes";
+import { WalletStatus } from "./WalletStatus";
+
+import { LevelpackObjectId, sokobanPackageObjectId, BackupLevels, network, networkUrl } from './constants';
 
 
 const client = new SuiClient({
-	url: 'https://fullnode.testnet.sui.io:443',
+	url: networkUrl,
 });
 
 const empty_flag = 0;
@@ -22,6 +26,8 @@ type ArrowKey = "ArrowUp" | "ArrowDown" | "ArrowLeft" | "ArrowRight";
 export const Game = () => {
   
   const account = useCurrentAccount();
+  const [open, setOpen] = useState(false);
+
   const [digest, setDigest] = useState(null);
   const [minted, setMinted] = useState(null);
 
@@ -84,7 +90,10 @@ export const Game = () => {
        loadPackLevels(0);
     }
     if (levels.length == 0){
-      mint_level();
+      if (level==0){
+        mint_level();
+      }
+      
     }else{
       makeLevelMap(level);
       setHasWon(!hasWon);
@@ -267,7 +276,10 @@ export const Game = () => {
 
   const mint_win = useCallback(async (actions:number[], level_index:number) => {
     console.log("try mint_win");
-    if (!account) return;
+    if (!account) {
+      setOpen(true);
+      return;
+    }
     console.log("got wallet");
     if (actions.length == 0) return;
     try {
@@ -282,10 +294,9 @@ export const Game = () => {
       })
 
       console.log("mint_win: ", LevelpackObjectId, level_index, actions);
-      
       await signAndExecuteTransactionBlock({
         transactionBlock: mintTransactionBlock,
-          chain: 'sui:testnet',
+          chain: ('sui:' + network) as `string:string`,
         },
         {
           onSuccess: (result) => {
@@ -342,7 +353,11 @@ export const Game = () => {
     }
 
     console.log("try mint_level");
-    if (!account) return;
+    if (!account) {
+      setOpen(true);
+      return;
+    }
+    
     console.log("got wallet");
     try {
       const mintTransactionBlock = new TransactionBlock(); 
@@ -360,7 +375,7 @@ export const Game = () => {
       
       await signAndExecuteTransactionBlock({
         transactionBlock: mintTransactionBlock,
-          chain: 'sui:testnet',
+          chain: ('sui:' + network) as `string:string`,
         },
         {
           onSuccess: (result) => {
@@ -379,6 +394,11 @@ export const Game = () => {
 
   return (
     <>
+      <ConnectModal
+			trigger={<h1 />}
+			open={open}
+			onOpenChange={(isOpen) => setOpen(isOpen)}
+		/>
       {messageWinner && (
         <div className="message-winner">
           <div>
@@ -388,7 +408,7 @@ export const Game = () => {
               <button className="btn" onClick={mint_level_badge}>
                   mint this level badge
               </button>
-              ) :(<div><a href={"https://suiexplorer.com/object/" + minted +"?network=testnet"} target="_blank" >Badge</a> Minted!</div>)
+              ) :(<div><a href={"https://suiexplorer.com/object/" + minted +"?network=" + network} target="_blank" >Badge</a> Minted!</div>)
             }
             
             {level < levels.length - 1 ? (
@@ -409,9 +429,10 @@ export const Game = () => {
           </div>
         </div>
       )}
-
-      <h1 className="title">Sokoban</h1>
-      <div className="pb-2 between flex">
+      <h1 className="title">Sokoban </h1>
+      
+      <Flex position="sticky" justify="between">
+      <Heading className="pb-2 between flex">
         <select className="btn" value={level} onChange={selectLevel}>
           {levels.map((l = "", index = 0) => (
             <option key={index} value={index}>
@@ -428,7 +449,14 @@ export const Game = () => {
                   </button>
               :<></>
             }
-      </div>
+        </Heading>
+        <Flex justify="between">
+        <Heading><WalletStatus /></Heading>
+        <Box position="sticky"><ConnectButton /></Box>
+
+        </Flex>
+      </Flex>
+      
 
       <div className="game" ref={gameScreenRef} tabIndex={-1} onKeyDown={onKeyDown}>
         {levelContainer.map((row, rowIndex) => (

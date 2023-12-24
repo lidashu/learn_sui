@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import "@mysten/dapp-kit/dist/index.css";
 import "@radix-ui/themes/styles.css";
 import { Game } from "./components/sokoban";
+import { network} from "./components/constants.ts"
 import "./index.css";
 
 import { getFullnodeUrl } from "@mysten/sui.js/client";
@@ -13,6 +14,7 @@ import {
 } from "@mysten/dapp-kit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Theme } from "@radix-ui/themes";
+import App from "./App.tsx";
 
 const queryClient = new QueryClient();
 
@@ -25,9 +27,9 @@ const { networkConfig } = createNetworkConfig({
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <Theme>
+    <Theme appearance="inherit">
       <QueryClientProvider client={queryClient}>
-        <SuiClientProvider networks={networkConfig} defaultNetwork="testnet">
+        <SuiClientProvider networks={networkConfig} defaultNetwork={network}>
           <WalletProvider autoConnect>
             <Game />
           </WalletProvider>

@@ -1,5 +1,8 @@
+export const network = 'testnet'; 
+export const networkUrl = 'https://fullnode.testnet.sui.io:443'; 
 export const LevelpackObjectId = '0xa66249c5b58b44a974c553a4b9739cfebf1b9e39d586c33e96d5729a3ef883ea'; 
 export const sokobanPackageObjectId = '0x8ef44e8461a4b9f36df4ca34a236a439a586c63a40cc20fe0119611b09d75e55'; 
+
 
 export const BackupLevels:number[][] = [
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
