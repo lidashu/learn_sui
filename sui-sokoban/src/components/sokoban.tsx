@@ -19,9 +19,6 @@ const player_flag = 4;
 
 type ArrowKey = "ArrowUp" | "ArrowDown" | "ArrowLeft" | "ArrowRight";
 
-const levelpack = await client.getObject({ id: LevelpackObjectId, options: { showContent: true} });
-const packlevels = levelpack.data.content.fields.levels;
-
 export const Game = () => {
   
   const account = useCurrentAccount();
@@ -42,8 +39,8 @@ export const Game = () => {
   
   const [levelContainer, setLevelContainer] = useState<number[][]>([]);
   const [messageWinner, setMessageWinner] = useState("");
-  const [level, setLevel] = useState<number>(0);
-  const [levels, setLevels] = useState(packlevels);
+  const [levels, setLevels] = useState([]);
+  const [level, setLevel] = useState<number>(-1);
 
   const makeLevelMap = (levelIndex: number) => {
 
@@ -83,8 +80,11 @@ export const Game = () => {
   };
 
   useEffect(() => {
+    if (level < 0){
+       loadPackLevels(0);
+    }
     if (levels.length == 0){
-        mint_level();
+      mint_level();
     }else{
       makeLevelMap(level);
       setHasWon(!hasWon);
@@ -211,11 +211,16 @@ export const Game = () => {
 
   };
 
-  const loadPackLevels = async () => {
+  const loadPackLevels = async (order:number=-1) => {
     let _levelpack = await client.getObject({ id: LevelpackObjectId, options: { showContent: true} });
     let _packlevels = _levelpack.data.content.fields.levels;
     setLevels(_packlevels);
-    setLevel(_packlevels.length - 1);
+    if (order < 0){
+      setLevel(_packlevels.length - 1);
+    }else{
+      setLevel(0);
+    }
+    
   };
 
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {

@@ -260,7 +260,7 @@
   }
   
   .cell-wall {
-    background-image: url("/assets/wall.png");
+    background-image: url("assets/wall.png");
   }
   
   .cell-empty {
@@ -268,15 +268,15 @@
   }
   
   .cell-goal {
-    background-image: url("/assets/goal.png");
+    background-image: url("assets/goal.png");
   }
   
   .cell-box {
-    background-image: url("/assets/box.png");
+    background-image: url("assets/box.png");
   }
   
   .cell-player {
-    background-image: url("/assets/player.png");
+    background-image: url("assets/player.png");
   }
   
   .cell-player-ArrowUp {
