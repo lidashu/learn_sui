@@ -9,6 +9,15 @@ import { WalletStatus } from "./WalletStatus";
 
 import { LevelpackObjectId, sokobanPackageObjectId, BackupLevels, network, networkUrl } from './constants';
 
+import block_img from "../../assets/block.gif"
+import wall_img from "../../assets/wall.png"
+import up_img from "../../assets/up.png"
+import down_img from "../../assets/down.png"
+import left_img from "../../assets/left.png"
+import right_img from "../../assets/right.png"
+import box_img from "../../assets/box.png"
+import target_img from "../../assets/target.png"
+
 
 const client = new SuiClient({
 	url: networkUrl,
@@ -35,7 +44,7 @@ export const Game = () => {
 
   const gameScreenRef = useRef<HTMLDivElement>(null);
   const [playerPos, setPlayer] = useState<number>(-1);
-  const [playerDirection, setPlayerDirection] = useState<string>("up");
+  const [playerDirection, setPlayerDirection] = useState<string>(up_img);
   const [mapWidth, setMapWidth] = useState<number>(-1);
   const [mapData, setMap] = useState<number[]>([]);
   const [playerActions, setPlayerActions] = useState<number[]>([]);
@@ -171,7 +180,7 @@ export const Game = () => {
             nextBox = nextPlayer - mapWidth;
           }
         }
-        setPlayerDirection("up");
+        setPlayerDirection(up_img);
         actions.push(2);
         break;
       case "ArrowDown":
@@ -181,7 +190,7 @@ export const Game = () => {
             nextBox = nextPlayer + mapWidth;
           }
         }
-        setPlayerDirection("down");
+        setPlayerDirection(down_img);
         actions.push(8);
         break;
       case "ArrowLeft":
@@ -191,7 +200,7 @@ export const Game = () => {
             nextBox = nextPlayer - 1;
           }
         }
-        setPlayerDirection("left")
+        setPlayerDirection(left_img)
         actions.push(4);
         break;
       case "ArrowRight":
@@ -201,7 +210,7 @@ export const Game = () => {
             nextBox = nextPlayer + 1;
           }
         }
-        setPlayerDirection("right")
+        setPlayerDirection(right_img)
         actions.push(6);
         break;
       default:
@@ -467,11 +476,11 @@ export const Game = () => {
         {levelContainer.map((row, rowIndex) => (
           <div className="flex" key={rowIndex}>
             {row.map((cell, cellIndex) => {
-              if (cell === 0) return <img src="/assets/block.gif" className="cell cell-empty cell-img" key={cellIndex} />;
-              else if (cell === 1) return <img src="/assets/wall.png" className="cell cell-wall cell-img" key={cellIndex} />;
-              else if (cell === box_flag) return <img src="/assets/box.png" className="cell cell-box cell-img" key={cellIndex} />;
-              else if (cell === target_flag) return <img src="/assets/target.png" className="cell cell-goal cell-img" key={cellIndex} />;
-              else if (cell === player_flag) return <img src={"/assets/" + playerDirection +".png"} className={`cell cell-img cell-player ${imgDirection}`} key={cellIndex} />;
+              if (cell === 0) return <img src={block_img} className="cell cell-empty cell-img" key={cellIndex} />;
+              else if (cell === 1) return <img src={wall_img} className="cell cell-wall cell-img" key={cellIndex} />;
+              else if (cell === box_flag) return <img src={box_img} className="cell cell-box cell-img" key={cellIndex} />;
+              else if (cell === target_flag) return <img src={target_img} className="cell cell-goal cell-img" key={cellIndex} />;
+              else if (cell === player_flag) return <img src={playerDirection} className={`cell cell-img cell-player ${imgDirection}`} key={cellIndex} />;
             })}
           </div>
         ))}
