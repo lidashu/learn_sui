@@ -8,12 +8,12 @@
   html {
     margin: 0;
     font-family: Arial, Helvetica, sans-serif;
-    background-color: rgb(164, 177, 64);
+    background-color: rgb(0, 0, 0);
   }
   
   .app {
     align-items: center;
-    background: rgb(164, 177, 64);
+    background: rgb(0, 0, 0);
     display: flex;
     flex-direction: column;
     height: 80vh;
@@ -21,12 +21,12 @@
   }
 
   .background {
-    background: rgb(164, 177, 64);
+    background: rgb(0, 0, 0);
   }
   
   .title {
     color: rgb(255, 255, 255);
-    background-color: rgb(164, 177, 64);
+    background-color: rgb(0, 0, 0);
     font-size: 40px;
     font-weight: bold;
     margin-top: 8px;
@@ -109,8 +109,8 @@
   }
   
   .game {
-    background-color: rgb(164, 177, 64);
-    outline: 10px solid rgb(164, 177, 64);
+    background-color: rgb(0, 0, 0);
+    outline: 10px solid rgb(0, 0, 0);
     justify-content: space-between;
   }
   
