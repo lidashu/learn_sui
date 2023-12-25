@@ -1,3 +1,9 @@
+# sokoban in Sui
+
+thanks to:
+1. levels from https://github.com/shunyue1320/sokoban
+2. frame frmo https://github.com/giulianoconti/sokoban-reactjs
+
 # Sui dApp Starter Template
 
 This dApp was created using `@mysten/create-dapp` that sets up a simple React
@@ -34,6 +40,4 @@ To build your app for deployment you can run
 pnpm build
 ```
 
-thanks:
-1. https://github.com/shunyue1320/sokoban
-2. https://github.com/giulianoconti/sokoban-reactjs
+
