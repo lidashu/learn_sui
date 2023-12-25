@@ -18,6 +18,10 @@ import right_img from "../../assets/right.png"
 import box_img from "../../assets/box.png"
 import target_img from "../../assets/target.png"
 
+const addBackground = {
+  backgroundImage: 'url(' + block_img + ')',
+}
+
 
 const client = new SuiClient({
 	url: networkUrl,
@@ -51,7 +55,6 @@ export const Game = () => {
   const [boxPos, setBox] = useState<Set<number>>(new Set([]));
   const [targetPos, setTarget] = useState<Set<number>>(new Set([]));
   const [hasWon, setHasWon] = useState(false);
-  const [imgDirection, setImgDirection] = useState("cell-player-ArrowUp");
   
   const [levelContainer, setLevelContainer] = useState<number[][]>([]);
   const [messageWinner, setMessageWinner] = useState("");
@@ -157,13 +160,7 @@ export const Game = () => {
 
   const handleKeyDown = ({ key }: { key: ArrowKey }): void => {
     // Set the direction of the player
-    const keyPressed = {
-      ArrowUp: "cell-player-ArrowUp",
-      ArrowDown: "cell-player-ArrowDown",
-      ArrowLeft: "cell-player-ArrowLeft",
-      ArrowRight: "cell-player-ArrowRight",
-    };
-    setImgDirection(keyPressed[key]);
+    
     let nextPlayer:number = -1;
     let nextBox:number = -1;
 
@@ -476,11 +473,11 @@ export const Game = () => {
         {levelContainer.map((row, rowIndex) => (
           <div className="flex" key={rowIndex}>
             {row.map((cell, cellIndex) => {
-              if (cell === 0) return <img src={block_img} className="cell cell-empty cell-img" key={cellIndex} />;
-              else if (cell === 1) return <img src={wall_img} className="cell cell-wall cell-img" key={cellIndex} />;
-              else if (cell === box_flag) return <img src={box_img} className="cell cell-box cell-img" key={cellIndex} />;
-              else if (cell === target_flag) return <img src={target_img} className="cell cell-goal cell-img" key={cellIndex} />;
-              else if (cell === player_flag) return <img src={playerDirection} className={`cell cell-img cell-player ${imgDirection}`} key={cellIndex} />;
+              if (cell === 0) return <img style={addBackground} src={block_img} className="cell cell-img" key={cellIndex} />;
+              else if (cell === 1) return <img style={addBackground} src={wall_img} className="cell cell-img" key={cellIndex} />;
+              else if (cell === box_flag) return <img style={addBackground} src={box_img} className="cell cell-img" key={cellIndex} />;
+              else if (cell === target_flag) return <img style={addBackground} src={target_img} className="cell cell-img" key={cellIndex} />;
+              else if (cell === player_flag) return <img style={addBackground} src={playerDirection} className={`cell cell-player`} key={cellIndex} />;
             })}
           </div>
         ))}

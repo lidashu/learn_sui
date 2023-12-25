@@ -252,39 +252,6 @@
     background-size: contain;
   }
   
-  .cell-wall {
-    background-image: url("/assets/block.gif");
-  }
-  
-  .cell-empty {
-    background-image: url("/assets/block.gif");
-  }
-  
-  .cell-goal {
-    background-image: url("/assets/block.gif");
-  }
-  
-  .cell-box {
-    background-image: url("/assets/block.gif");
-  }
-  
-  .cell-player {
-    background-image: url("/assets/block.gif");
-  }
-  
-  .cell-player-ArrowUp {
-    background-image: url("/assets/block.gif");
-  }
-  .cell-player-ArrowDown {
-    background-image: url("/assets/block.gif");
-  }
-  .cell-player-ArrowLeft {
-    background-image: url("/assets/block.gif");
-  }
-  .cell-player-ArrowRight {
-    background-image: url("/assets/block.gif");
-  }
-  
   .mt-20 {
     margin-top: 20px;
   }
