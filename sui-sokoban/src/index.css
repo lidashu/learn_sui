@@ -253,36 +253,36 @@
   }
   
   .cell-wall {
-    background-image: url("/assets/wall.png");
+    background-image: url("/assets/block.gif");
   }
   
   .cell-empty {
-    background-color: rgb(128, 128, 128);
+    background-image: url("/assets/block.gif");
   }
   
   .cell-goal {
-    background-image: url("/assets/goal.png");
+    background-image: url("/assets/block.gif");
   }
   
   .cell-box {
-    background-image: url("/assets/box.png");
+    background-image: url("/assets/block.gif");
   }
   
   .cell-player {
-    background-image: url("/assets/player.png");
+    background-image: url("/assets/block.gif");
   }
   
   .cell-player-ArrowUp {
-    transform: rotate(0deg);
+    background-image: url("/assets/block.gif");
   }
   .cell-player-ArrowDown {
-    transform: rotate(180deg);
+    background-image: url("/assets/block.gif");
   }
   .cell-player-ArrowLeft {
-    transform: rotate(270deg);
+    background-image: url("/assets/block.gif");
   }
   .cell-player-ArrowRight {
-    transform: rotate(90deg);
+    background-image: url("/assets/block.gif");
   }
   
   .mt-20 {

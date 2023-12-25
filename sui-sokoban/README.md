@@ -1,7 +1,7 @@
 # sokoban in Sui
 
 thanks to:
-1. levels from https://github.com/shunyue1320/sokoban
+1. levels & icon from https://github.com/shunyue1320/sokoban
 2. frame frmo https://github.com/giulianoconti/sokoban-reactjs
 
 # Sui dApp Starter Template

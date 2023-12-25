@@ -35,6 +35,7 @@ export const Game = () => {
 
   const gameScreenRef = useRef<HTMLDivElement>(null);
   const [playerPos, setPlayer] = useState<number>(-1);
+  const [playerDirection, setPlayerDirection] = useState<string>("up");
   const [mapWidth, setMapWidth] = useState<number>(-1);
   const [mapData, setMap] = useState<number[]>([]);
   const [playerActions, setPlayerActions] = useState<number[]>([]);
@@ -170,6 +171,7 @@ export const Game = () => {
             nextBox = nextPlayer - mapWidth;
           }
         }
+        setPlayerDirection("up");
         actions.push(2);
         break;
       case "ArrowDown":
@@ -179,6 +181,7 @@ export const Game = () => {
             nextBox = nextPlayer + mapWidth;
           }
         }
+        setPlayerDirection("down");
         actions.push(8);
         break;
       case "ArrowLeft":
@@ -188,6 +191,7 @@ export const Game = () => {
             nextBox = nextPlayer - 1;
           }
         }
+        setPlayerDirection("left")
         actions.push(4);
         break;
       case "ArrowRight":
@@ -197,6 +201,7 @@ export const Game = () => {
             nextBox = nextPlayer + 1;
           }
         }
+        setPlayerDirection("right")
         actions.push(6);
         break;
       default:
@@ -462,11 +467,11 @@ export const Game = () => {
         {levelContainer.map((row, rowIndex) => (
           <div className="flex" key={rowIndex}>
             {row.map((cell, cellIndex) => {
-              if (cell === 0) return <div className="cell cell-empty cell-img" key={cellIndex} />;
-              else if (cell === 1) return <div className="cell cell-wall cell-img" key={cellIndex} />;
-              else if (cell === box_flag) return <div className="cell cell-box cell-img" key={cellIndex} />;
-              else if (cell === target_flag) return <div className="cell cell-goal cell-img" key={cellIndex} />;
-              else if (cell === player_flag) return <div className={`cell cell-img cell-player ${imgDirection}`} key={cellIndex} />;
+              if (cell === 0) return <img src="/assets/block.gif" className="cell cell-empty cell-img" key={cellIndex} />;
+              else if (cell === 1) return <img src="/assets/wall.png" className="cell cell-wall cell-img" key={cellIndex} />;
+              else if (cell === box_flag) return <img src="/assets/box.png" className="cell cell-box cell-img" key={cellIndex} />;
+              else if (cell === target_flag) return <img src="/assets/target.png" className="cell cell-goal cell-img" key={cellIndex} />;
+              else if (cell === player_flag) return <img src={"/assets/" + playerDirection +".png"} className={`cell cell-img cell-player ${imgDirection}`} key={cellIndex} />;
             })}
           </div>
         ))}
